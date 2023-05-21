@@ -4,9 +4,12 @@ import datetime
 from functions_FFNN import *
 sys.path.append('src')
 
+# Import modules from M.Nielsen code at ./src/
 import mnist_loader
 import network2
 
+
+# Identify the test (for saving results)
 current_time = datetime.datetime.now()
 id_test = current_time.strftime("%Y-%m-%d_%H-%M-%S")
 
