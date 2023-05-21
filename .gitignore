@@ -163,3 +163,4 @@ cython_debug/
 /03_AttractorNetwork/tests/
 /03_AttractorNetwork/patterns/n_32/
 /03_AttractorNetwork/patterns/basic/
+/07_FeedForwardNetwork/data/mnist_expanded.pkl.gz
