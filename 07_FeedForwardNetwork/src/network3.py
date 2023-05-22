@@ -34,7 +34,6 @@ import gzip
 
 # Third-party libraries
 import numpy as np
-np.bool = bool
 import theano
 import theano.tensor as T
 from theano.tensor.nnet import conv
@@ -63,7 +62,7 @@ else:
         "network3.py to set\nthe GPU flag to True.")
 
 #### Load the MNIST data
-def load_data_shared(filename="mnist.pkl.gz"):
+def load_data_shared(filename="./data/mnist.pkl.gz"):
     f = gzip.open(filename, 'rb')
     training_data, validation_data, test_data = pickle.load(f, encoding="latin1")
     f.close()
