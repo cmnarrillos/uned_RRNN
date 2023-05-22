@@ -11,3 +11,16 @@ subdirectories have been employed:
 
 - 03_AttractorNetwork: for implementing a functional Hopfield model with different add-ons and variations to study their influence
 - 07_FeedForwardNetwork: for studying the influence of the number of hidden layers in a Deep FeedForward Neural Network. This makes use of both the [repository of Michael Nielsen](https://github.com/mnielsen/neural-networks-and-deep-learning) and its [adaption to Python3 by Dobrzanski](https://github.com/MichalDanielDobrzanski/DeepLearningPython35)
+
+For running the file main_deepnetwork.py a different environment 
+has been created due to compatibility issues for the theano depreciated
+library. That environment can be retrieved with the following 
+dependencies in the poetry.toml file:
+
+`[tool.poetry.dependencies]`
+
+`python = "^3.9"`
+
+`numpy = "1.20.3"`
+
+`theano = "1.0.5"`
