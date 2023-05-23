@@ -7,6 +7,7 @@ sys.path.append('src')
 import network3
 from network3 import Network
 from network3 import ConvPoolLayer, FullyConnectedLayer, SoftmaxLayer
+from network3 import ReLU, ReLU_mod
 
 
 # Identify the test (for saving results)
@@ -33,6 +34,106 @@ if True:
                     FullyConnectedLayer(n_in=784, n_out=100),
                     SoftmaxLayer(n_in=100, n_out=10)
                     ], mini_batch_size)
+
+    # Train the network
+    net.SGD(training_data, epochs, mini_batch_size, lr,
+                validation_data, test_data, lmbda=lmbda)
+
+# # 2nd network to train: 1 conv-pool + 1 FC layer
+if True:
+    # Initialize
+    print('\n\n\n\n NEW CASE: Convolutional + Pool + FC Layer')
+    print('Architecture: [784, 20x(24,24), 100, 10]')
+    net = Network([
+        ConvPoolLayer(image_shape=(mini_batch_size, 1, 28, 28),
+                      filter_shape=(20, 1, 5, 5),
+                      poolsize=(2, 2)),
+        FullyConnectedLayer(n_in=20 * 12 * 12, n_out=100),
+        SoftmaxLayer(n_in=100, n_out=10)], mini_batch_size)
+
+    # Train the network
+    net.SGD(training_data, epochs, mini_batch_size, lr,
+                validation_data, test_data, lmbda=lmbda)
+
+# # 3rd network to train: 2 conv-pool + 1 FC layer
+if True:
+    # Initialize
+    print('\n\n\n\n NEW CASE: Convolutional + Pool + '
+                             'Convolutional + Pool + FC Layer')
+    print('Architecture: [784, 20x(24,24), 20x(12,12), 100, 10]')
+    net = Network([
+        ConvPoolLayer(image_shape=(mini_batch_size, 1, 28, 28),
+                      filter_shape=(20, 1, 5, 5),
+                      poolsize=(2, 2)),
+        ConvPoolLayer(image_shape=(mini_batch_size, 20, 12, 12),
+                      filter_shape=(40, 20, 5, 5),
+                      poolsize=(2, 2)),
+        FullyConnectedLayer(n_in=40*4*4, n_out=100),
+        SoftmaxLayer(n_in=100, n_out=10)], mini_batch_size)
+
+    # Train the network
+    net.SGD(training_data, epochs, mini_batch_size, lr,
+                validation_data, test_data, lmbda=lmbda)
+
+# # 4th network to train: 2 conv-pool + 1 FC layer with ReLU
+if True:
+    # Initialize
+    print('\n\n\n\n NEW CASE: Convolutional + Pool + '
+                             'Convolutional + Pool + FC Layer')
+    print('Architecture: [784, 20x(24,24), 20x(12,12), 100, 10]')
+    net = Network([
+        ConvPoolLayer(image_shape=(mini_batch_size, 1, 28, 28),
+                      filter_shape=(20, 1, 5, 5),
+                      poolsize=(2, 2)),
+        ConvPoolLayer(image_shape=(mini_batch_size, 20, 12, 12),
+                      filter_shape=(40, 20, 5, 5),
+                      poolsize=(2, 2)),
+        FullyConnectedLayer(n_in=40*4*4, n_out=100, activation_fn=ReLU),
+        SoftmaxLayer(n_in=100, n_out=10)], mini_batch_size)
+
+    # Train the network
+    net.SGD(training_data, epochs, mini_batch_size, lr,
+                validation_data, test_data, lmbda=lmbda)
+
+# # 5th network to train: 2 conv-pool + 1 FC layer with modified ReLU
+if True:
+    # Initialize
+    print('\n\n\n\n NEW CASE: Convolutional + Pool + '
+                             'Convolutional + Pool + FC Layer')
+    print('Architecture: [784, 20x(24,24), 20x(12,12), 100, 10]')
+    net = Network([
+        ConvPoolLayer(image_shape=(mini_batch_size, 1, 28, 28),
+                      filter_shape=(20, 1, 5, 5),
+                      poolsize=(2, 2)),
+        ConvPoolLayer(image_shape=(mini_batch_size, 20, 12, 12),
+                      filter_shape=(40, 20, 5, 5),
+                      poolsize=(2, 2)),
+        FullyConnectedLayer(n_in=40*4*4, n_out=100, activation_fn=ReLU_mod),
+        SoftmaxLayer(n_in=100, n_out=10)], mini_batch_size)
+
+    # Train the network
+    net.SGD(training_data, epochs, mini_batch_size, lr,
+                validation_data, test_data, lmbda=lmbda)
+
+
+# # 6th network to train: 2 conv-pool + 1 FC layer with modified ReLU
+# # expanding training data to 250.000
+if True:
+    expanded_training_data, _, _ = network3.load_data_shared(
+        './data/mnist_expanded.pkl.gz')
+    # Initialize
+    print('\n\n\n\n NEW CASE: Convolutional + Pool + '
+                             'Convolutional + Pool + FC Layer')
+    print('Architecture: [784, 20x(24,24), 20x(12,12), 100, 10]')
+    net = Network([
+        ConvPoolLayer(image_shape=(mini_batch_size, 1, 28, 28),
+                      filter_shape=(20, 1, 5, 5),
+                      poolsize=(2, 2)),
+        ConvPoolLayer(image_shape=(mini_batch_size, 20, 12, 12),
+                      filter_shape=(40, 20, 5, 5),
+                      poolsize=(2, 2)),
+        FullyConnectedLayer(n_in=40*4*4, n_out=100, activation_fn=ReLU_mod),
+        SoftmaxLayer(n_in=100, n_out=10)], mini_batch_size)
 
     # Train the network
     net.SGD(training_data, epochs, mini_batch_size, lr,
