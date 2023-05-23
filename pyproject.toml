@@ -7,16 +7,12 @@ readme = "README.md"
 packages = [{include = "rrnn_tasks"}]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.11,<3.12"
 matplotlib = "^3.0"
 numpy = "^1.0"
-osmnx = "^1.2"
 scipy = "^1.0"
-simpy = "^4.0"
 jupyter = "^1.0.0"
 scikit-learn = "^1.2"
-tdqm = "^0.0.1"
-theano = "^1.0.5"
 setuptools = "^67.8.0"
 
 [build-system]
