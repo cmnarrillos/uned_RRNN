@@ -39,6 +39,7 @@ if True:
     net.SGD(training_data, epochs, mini_batch_size, lr,
                 validation_data, test_data, lmbda=lmbda)
 
+# -----------------------------------------------------------------------------
 # # 2nd network to train: 1 conv-pool + 1 FC layer
 if True:
     # Initialize
@@ -55,6 +56,7 @@ if True:
     net.SGD(training_data, epochs, mini_batch_size, lr,
                 validation_data, test_data, lmbda=lmbda)
 
+# -----------------------------------------------------------------------------
 # # 3rd network to train: 2 conv-pool + 1 FC layer
 if True:
     # Initialize
@@ -75,6 +77,7 @@ if True:
     net.SGD(training_data, epochs, mini_batch_size, lr,
                 validation_data, test_data, lmbda=lmbda)
 
+# -----------------------------------------------------------------------------
 # # 4th network to train: 2 conv-pool + 1 FC layer with ReLU
 if True:
     # Initialize
@@ -95,6 +98,7 @@ if True:
     net.SGD(training_data, epochs, mini_batch_size, lr,
                 validation_data, test_data, lmbda=lmbda)
 
+# -----------------------------------------------------------------------------
 # # 5th network to train: 2 conv-pool + 1 FC layer with modified ReLU
 if True:
     # Initialize
@@ -116,6 +120,7 @@ if True:
                 validation_data, test_data, lmbda=lmbda)
 
 
+# -----------------------------------------------------------------------------
 # # 6th network to train: 2 conv-pool + 1 FC layer with modified ReLU
 # # expanding training data to 250.000
 if True:
@@ -141,6 +146,7 @@ if True:
                 validation_data, test_data, lmbda=lmbda)
 
 
+# -----------------------------------------------------------------------------
 # # 7th network to train: 2 conv-pool + 2 FC layers with modified ReLU
 # # expanding training data to 250.000
 if True:
@@ -167,6 +173,7 @@ if True:
                 validation_data, test_data, lmbda=lmbda)
 
 
+# -----------------------------------------------------------------------------
 # # 8th network to train: 2 conv-pool + 2 FC layers with modified ReLU
 # # expanding training data to 250.000. Include dropout
 if True:
