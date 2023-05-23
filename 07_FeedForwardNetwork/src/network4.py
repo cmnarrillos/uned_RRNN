@@ -65,7 +65,7 @@ def load_data_shared(filename="./data/mnist.pkl.gz"):
     def shared(data):
         """Place the data into shared variables. This allows TensorFlow to access the data efficiently."""
         shared_x = tf.Variable(
-            np.asarray(data[0], dtype=np.float32), trainable=False)
+            np.asarray(data[0], dtype=np.float64), trainable=False)
         shared_y = tf.Variable(
             np.asarray(data[1], dtype=np.int32), trainable=False)
         return shared_x, tf.cast(shared_y, tf.int32)
@@ -80,8 +80,8 @@ class Network(object):
         self.layers = layers
         self.mini_batch_size = mini_batch_size
         self.params = [param for layer in self.layers for param in layer.params]
-        self.x = tf.placeholder(tf.float32, [None, layers[0].n_in])
-        self.y = tf.placeholder(tf.int32, [None])
+        self.x = tf.keras.Input(shape=(layers[0].n_in,), dtype=tf.float64)
+        self.y = tf.keras.Input(shape=(), dtype=tf.int32)
         init_layer = self.layers[0]
         init_layer.set_inpt(self.x, self.x, self.mini_batch_size)
         for j in range(1, len(self.layers)):
@@ -99,9 +99,9 @@ class Network(object):
         test_x, test_y = test_data
 
         # compute number of minibatches for training, validation, and testing
-        num_training_batches = int(len(training_data[0]) / mini_batch_size)
-        num_validation_batches = int(len(validation_data[0]) / mini_batch_size)
-        num_test_batches = int(len(test_data[0]) / mini_batch_size)
+        num_training_batches = int(training_data[0].numpy().shape[0] / mini_batch_size)
+        num_validation_batches = int(validation_data[0].numpy().shape[0] / mini_batch_size)
+        num_test_batches = int(test_data[0].numpy().shape[0] / mini_batch_size)
 
         # define the (regularized) cost function, gradients, and updates
         l2_norm_squared = sum([tf.reduce_sum(tf.square(layer.w)) for layer in self.layers])
@@ -163,7 +163,7 @@ class Network(object):
             best_validation_accuracy, best_iteration))
         print("Corresponding test accuracy of {0:.2%}".format(test_accuracy))
 
-#### Define layer types
+        #### Define layer types
 
 class ConvPoolLayer(object):
     """Used to create a combination of a convolutional and a max-pooling
@@ -194,12 +194,12 @@ class ConvPoolLayer(object):
         self.w = tf.Variable(
             np.asarray(
                 np.random.normal(loc=0, scale=np.sqrt(1.0 / n_out), size=filter_shape),
-                dtype=tf.float32),
+                dtype=tf.float64),
             name='w')
         self.b = tf.Variable(
             np.asarray(
                 np.random.normal(loc=0, scale=1.0, size=(filter_shape[0],)),
-                dtype=tf.float32),
+                dtype=tf.float64),
             name='b')
         self.params = [self.w, self.b]
 
@@ -222,14 +222,12 @@ class FullyConnectedLayer(object):
         self.p_dropout = p_dropout
         # Initialize weights and biases
         self.w = tf.Variable(
-            np.asarray(
-                np.random.normal(loc=0.0, scale=np.sqrt(1.0 / n_out), size=(n_in, n_out)),
-                dtype=tf.float32),
+            np.random.normal(loc=0.0, scale=np.sqrt(1.0 / n_out),
+                             size=(n_in, n_out)).astype(np.float64),
             name='w')
         self.b = tf.Variable(
-            np.asarray(
-                np.random.normal(loc=0.0, scale=1.0, size=(n_out,)),
-                dtype=tf.float32),
+            np.random.normal(loc=0.0, scale=1.0,
+                             size=(n_out,)).astype(np.float64),
             name='b')
         self.params = [self.w, self.b]
 
@@ -245,7 +243,7 @@ class FullyConnectedLayer(object):
 
     def accuracy(self, y):
         "Return the accuracy for the mini-batch."
-        return tf.reduce_mean(tf.cast(tf.equal(y, self.y_out), tf.float32))
+        return tf.reduce_mean(tf.cast(tf.equal(y, self.y_out), tf.float64))
 
 class SoftmaxLayer(object):
 
@@ -255,11 +253,9 @@ class SoftmaxLayer(object):
         self.p_dropout = p_dropout
         # Initialize weights and biases
         self.w = tf.Variable(
-            np.zeros((n_in, n_out), dtype=tf.float32),
-            name='w')
+            np.zeros((n_in, n_out)), name='w')
         self.b = tf.Variable(
-            np.zeros((n_out,), dtype=tf.float32),
-            name='b')
+            np.zeros((n_out,)), name='b')
         self.params = [self.w, self.b]
 
     def set_inpt(self, inpt, inpt_dropout, mini_batch_size):
@@ -272,11 +268,12 @@ class SoftmaxLayer(object):
 
     def cost(self, net):
         "Return the log-likelihood cost."
-        return -tf.reduce_mean(tf.log(self.output_dropout) * tf.one_hot(net.y, self.n_out))
+        one_hot_y = tf.cast(tf.one_hot(net.y, self.n_out), tf.float64)
+        return -tf.reduce_mean(tf.math.log(self.output_dropout) * one_hot_y)
 
     def accuracy(self, y):
         "Return the accuracy for the mini-batch."
-        return tf.reduce_mean(tf.cast(tf.equal(y, self.y_out), tf.float32))
+        return tf.reduce_mean(tf.cast(tf.equal(y, self.y_out), tf.float64))
 
 
 #### Miscellanea
@@ -285,5 +282,5 @@ def size(data):
     return data[0].shape[0]
 
 def dropout_layer(layer, p_dropout):
-    mask = tf.cast(tf.random.uniform(layer.shape) > p_dropout, tf.float32)
+    mask = tf.cast(tf.random.uniform(layer.shape) > p_dropout, tf.float64)
     return layer * mask
