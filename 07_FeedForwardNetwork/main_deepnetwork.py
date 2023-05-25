@@ -16,12 +16,15 @@ id_test = current_time.strftime("%Y-%m-%d_%H-%M-%S")+'_deep'
 
 # Load MNIST data
 training_data, validation_data, test_data = network3.load_data_shared()
+expanded_training_data, _, _ = network3.load_data_shared(
+    './data/mnist_expanded.pkl.gz')
 
 # Set default parameters for training all examples
 epochs = 6
 mini_batch_size = 10
 lr = 0.5
 lmbda = 5.0
+dropout = 0.2
 
 
 # -----------------------------------------------------------------------------
@@ -124,8 +127,6 @@ if True:
 # # 6th network to train: 2 conv-pool + 1 FC layer with modified ReLU
 # # expanding training data to 250.000
 if True:
-    expanded_training_data, _, _ = network3.load_data_shared(
-        './data/mnist_expanded.pkl.gz')
     # Initialize
     print('\n\n\n\n NEW CASE: Convolutional + Pool + '
                              'Convolutional + Pool + FC Layer')
@@ -147,11 +148,59 @@ if True:
 
 
 # -----------------------------------------------------------------------------
-# # 7th network to train: 2 conv-pool + 2 FC layers with modified ReLU
+# # 7.1th network to train: 2 conv-pool + 2 FC layers with sigmoid
 # # expanding training data to 250.000
 if True:
-    expanded_training_data, _, _ = network3.load_data_shared(
-        './data/mnist_expanded.pkl.gz')
+    # Initialize
+    print('\n\n\n\n NEW CASE: Convolutional + Pool + '
+                             'Convolutional + Pool + 2 FC Layers')
+    print('Architecture: [784, 20x(24,24), 20x(12,12), 100, 100, 10]')
+    print('Expanded training data')
+    net = Network([
+        ConvPoolLayer(image_shape=(mini_batch_size, 1, 28, 28),
+                      filter_shape=(20, 1, 5, 5),
+                      poolsize=(2, 2)),
+        ConvPoolLayer(image_shape=(mini_batch_size, 20, 12, 12),
+                      filter_shape=(40, 20, 5, 5),
+                      poolsize=(2, 2)),
+        FullyConnectedLayer(n_in=40*4*4, n_out=100),
+        FullyConnectedLayer(n_in=100, n_out=100),
+        SoftmaxLayer(n_in=100, n_out=10)], mini_batch_size)
+
+    # Train the network
+    net.SGD(expanded_training_data, epochs, mini_batch_size, lr,
+                validation_data, test_data, lmbda=lmbda)
+
+
+# -----------------------------------------------------------------------------
+# # 7.2th network to train: 2 conv-pool + 2 FC layers with modified ReLU
+# # expanding training data to 250.000
+if True:
+    # Initialize
+    print('\n\n\n\n NEW CASE: Convolutional + Pool + '
+                             'Convolutional + Pool + 2 FC Layers')
+    print('Architecture: [784, 20x(24,24), 20x(12,12), 100, 100, 10]')
+    print('Expanded training data')
+    net = Network([
+        ConvPoolLayer(image_shape=(mini_batch_size, 1, 28, 28),
+                      filter_shape=(20, 1, 5, 5),
+                      poolsize=(2, 2)),
+        ConvPoolLayer(image_shape=(mini_batch_size, 20, 12, 12),
+                      filter_shape=(40, 20, 5, 5),
+                      poolsize=(2, 2)),
+        FullyConnectedLayer(n_in=40*4*4, n_out=100, activation_fn=ReLU),
+        FullyConnectedLayer(n_in=100, n_out=100, activation_fn=ReLU),
+        SoftmaxLayer(n_in=100, n_out=10)], mini_batch_size)
+
+    # Train the network
+    net.SGD(expanded_training_data, epochs, mini_batch_size, lr,
+                validation_data, test_data, lmbda=lmbda)
+
+
+# -----------------------------------------------------------------------------
+# # 7.3th network to train: 2 conv-pool + 2 FC layers with modified ReLU
+# # expanding training data to 250.000
+if True:
     # Initialize
     print('\n\n\n\n NEW CASE: Convolutional + Pool + '
                              'Convolutional + Pool + 2 FC Layers')
@@ -174,11 +223,36 @@ if True:
 
 
 # -----------------------------------------------------------------------------
-# # 8th network to train: 2 conv-pool + 2 FC layers with modified ReLU
+# # 8.1th network to train: 2 conv-pool + 2 FC layers with sigmoid
 # # expanding training data to 250.000. Include dropout
 if True:
-    expanded_training_data, _, _ = network3.load_data_shared(
-        './data/mnist_expanded.pkl.gz')
+    # Initialize
+    print('\n\n\n\n NEW CASE: Convolutional + Pool + '
+                             'Convolutional + Pool + 2FC Layers')
+    print('Architecture: [784, 20x(24,24), 20x(12,12), 100, 100, 10]')
+    print('Expanded training data')
+    print('Include dropout at FC layers')
+    net = Network([
+        ConvPoolLayer(image_shape=(mini_batch_size, 1, 28, 28),
+                      filter_shape=(20, 1, 5, 5),
+                      poolsize=(2, 2)),
+        ConvPoolLayer(image_shape=(mini_batch_size, 20, 12, 12),
+                      filter_shape=(40, 20, 5, 5),
+                      poolsize=(2, 2)),
+        FullyConnectedLayer(n_in=40*4*4, n_out=100, p_dropout=dropout),
+        FullyConnectedLayer(n_in=100, n_out=100, p_dropout=dropout),
+        SoftmaxLayer(n_in=100, n_out=10)], mini_batch_size)
+
+    # Train the network
+    net.SGD(expanded_training_data, epochs, mini_batch_size, lr,
+                validation_data, test_data, lmbda=lmbda)
+
+
+
+# -----------------------------------------------------------------------------
+# # 8.2th network to train: 2 conv-pool + 2 FC layers with ReLU
+# # expanding training data to 250.000. Include dropout
+if True:
     # Initialize
     print('\n\n\n\n NEW CASE: Convolutional + Pool + '
                              'Convolutional + Pool + 2FC Layers')
@@ -193,9 +267,139 @@ if True:
                       filter_shape=(40, 20, 5, 5),
                       poolsize=(2, 2)),
         FullyConnectedLayer(n_in=40*4*4, n_out=100,
-                            activation_fn=ReLU_mod, p_dropout=0.5),
+                            activation_fn=ReLU, p_dropout=dropout),
         FullyConnectedLayer(n_in=100, n_out=100,
-                            activation_fn=ReLU_mod, p_dropout=0.5),
+                            activation_fn=ReLU, p_dropout=dropout),
+        SoftmaxLayer(n_in=100, n_out=10)], mini_batch_size)
+
+    # Train the network
+    net.SGD(expanded_training_data, epochs, mini_batch_size, lr,
+                validation_data, test_data, lmbda=lmbda)
+
+
+
+# -----------------------------------------------------------------------------
+# # 8.3th network to train: 2 conv-pool + 2 FC layers with modified ReLU
+# # expanding training data to 250.000. Include dropout
+if True:
+    # Initialize
+    print('\n\n\n\n NEW CASE: Convolutional + Pool + '
+                             'Convolutional + Pool + 2FC Layers')
+    print('Architecture: [784, 20x(24,24), 20x(12,12), 100, 100, 10]')
+    print('Expanded training data')
+    print('Include dropout at FC layers')
+    net = Network([
+        ConvPoolLayer(image_shape=(mini_batch_size, 1, 28, 28),
+                      filter_shape=(20, 1, 5, 5),
+                      poolsize=(2, 2)),
+        ConvPoolLayer(image_shape=(mini_batch_size, 20, 12, 12),
+                      filter_shape=(40, 20, 5, 5),
+                      poolsize=(2, 2)),
+        FullyConnectedLayer(n_in=40*4*4, n_out=100,
+                            activation_fn=ReLU_mod, p_dropout=dropout),
+        FullyConnectedLayer(n_in=100, n_out=100,
+                            activation_fn=ReLU_mod, p_dropout=dropout),
+        SoftmaxLayer(n_in=100, n_out=10)], mini_batch_size)
+
+    # Train the network
+    net.SGD(expanded_training_data, epochs, mini_batch_size, lr,
+                validation_data, test_data, lmbda=lmbda)
+
+
+
+# -----------------------------------------------------------------------------
+# # 9th network to train: 2 conv-pool + 3 FC layers with modified ReLU
+# # expanding training data to 250.000. Include dropout
+if True:
+    # Initialize
+    print('\n\n\n\n NEW CASE: Convolutional + Pool + '
+                             'Convolutional + Pool + 3FC Layers')
+    print('Architecture: [784, 20x(24,24), 20x(12,12), 100, 100, 100, 10]')
+    print('Expanded training data')
+    print('Include dropout at FC layers')
+    net = Network([
+        ConvPoolLayer(image_shape=(mini_batch_size, 1, 28, 28),
+                      filter_shape=(20, 1, 5, 5),
+                      poolsize=(2, 2)),
+        ConvPoolLayer(image_shape=(mini_batch_size, 20, 12, 12),
+                      filter_shape=(40, 20, 5, 5),
+                      poolsize=(2, 2)),
+        FullyConnectedLayer(n_in=40*4*4, n_out=100,
+                            activation_fn=ReLU_mod, p_dropout=dropout),
+        FullyConnectedLayer(n_in=100, n_out=100,
+                            activation_fn=ReLU_mod, p_dropout=dropout),
+        FullyConnectedLayer(n_in=100, n_out=100,
+                            activation_fn=ReLU_mod, p_dropout=dropout),
+        SoftmaxLayer(n_in=100, n_out=10)], mini_batch_size)
+
+    # Train the network
+    net.SGD(expanded_training_data, epochs, mini_batch_size, lr,
+                validation_data, test_data, lmbda=lmbda)
+
+
+
+# -----------------------------------------------------------------------------
+# # 10th network to train: 2 conv-pool + 4 FC layers with modified ReLU
+# # expanding training data to 250.000. Include dropout
+if True:
+    # Initialize
+    print('\n\n\n\n NEW CASE: Convolutional + Pool + '
+                             'Convolutional + Pool + 4FC Layers')
+    print('Architecture: [784, 20x(24,24), 20x(12,12), '
+                         '100, 100, 100, 100, 10]')
+    print('Expanded training data')
+    print('Include dropout at FC layers')
+    net = Network([
+        ConvPoolLayer(image_shape=(mini_batch_size, 1, 28, 28),
+                      filter_shape=(20, 1, 5, 5),
+                      poolsize=(2, 2)),
+        ConvPoolLayer(image_shape=(mini_batch_size, 20, 12, 12),
+                      filter_shape=(40, 20, 5, 5),
+                      poolsize=(2, 2)),
+        FullyConnectedLayer(n_in=40*4*4, n_out=100,
+                            activation_fn=ReLU_mod, p_dropout=dropout),
+        FullyConnectedLayer(n_in=100, n_out=100,
+                            activation_fn=ReLU_mod, p_dropout=dropout),
+        FullyConnectedLayer(n_in=100, n_out=100,
+                            activation_fn=ReLU_mod, p_dropout=dropout),
+        FullyConnectedLayer(n_in=100, n_out=100,
+                            activation_fn=ReLU_mod, p_dropout=dropout),
+        SoftmaxLayer(n_in=100, n_out=10)], mini_batch_size)
+
+    # Train the network
+    net.SGD(expanded_training_data, epochs, mini_batch_size, lr,
+                validation_data, test_data, lmbda=lmbda)
+
+
+
+# -----------------------------------------------------------------------------
+# # 11th network to train: 2 conv-pool + 5 FC layers with modified ReLU
+# # expanding training data to 250.000. Include dropout
+if True:
+    # Initialize
+    print('\n\n\n\n NEW CASE: Convolutional + Pool + '
+                             'Convolutional + Pool + 5FC Layers')
+    print('Architecture: [784, 20x(24,24), 20x(12,12), '
+                         '100, 100, 100, 100, 100, 10]')
+    print('Expanded training data')
+    print('Include dropout at FC layers')
+    net = Network([
+        ConvPoolLayer(image_shape=(mini_batch_size, 1, 28, 28),
+                      filter_shape=(20, 1, 5, 5),
+                      poolsize=(2, 2)),
+        ConvPoolLayer(image_shape=(mini_batch_size, 20, 12, 12),
+                      filter_shape=(40, 20, 5, 5),
+                      poolsize=(2, 2)),
+        FullyConnectedLayer(n_in=40*4*4, n_out=100,
+                            activation_fn=ReLU_mod, p_dropout=dropout),
+        FullyConnectedLayer(n_in=100, n_out=100,
+                            activation_fn=ReLU_mod, p_dropout=dropout),
+        FullyConnectedLayer(n_in=100, n_out=100,
+                            activation_fn=ReLU_mod, p_dropout=dropout),
+        FullyConnectedLayer(n_in=100, n_out=100,
+                            activation_fn=ReLU_mod, p_dropout=dropout),
+        FullyConnectedLayer(n_in=100, n_out=100,
+                            activation_fn=ReLU_mod, p_dropout=dropout),
         SoftmaxLayer(n_in=100, n_out=10)], mini_batch_size)
 
     # Train the network

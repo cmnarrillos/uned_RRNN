@@ -55,13 +55,15 @@ def document_test(filename, network_sizes, test_acc_init, test_acc_end,
     if not os.path.exists('./tests/' + id_test):
         os.makedirs('./tests/' + id_test)
 
-    plot_grad_evolution(norms, './tests/' + id_test + '/' + filename + '_grad.png')
+    plot_grad_evolution(norms, './tests/' + id_test + '/' + filename +
+                        '_grad.png')
     plot_grad_evolution(norms, './tests/' + id_test + '/' + filename +
                         '_gradlog.png', log=True)
-    plot_val_evolution(validation_acc_train, './tests/' + id_test + '/' + filename +
-                        '_accuracy.png', int(params[1]), accuracy=True)
-    plot_val_evolution(validation_cost_train, './tests/' + id_test + '/' + filename +
-                        '_cost.png', accuracy=False)
+    plot_val_evolution(validation_acc_train, './tests/' + id_test + '/' +
+                       filename + '_accuracy.png', int(params[1]),
+                       accuracy=True)
+    plot_val_evolution(validation_cost_train, './tests/' + id_test + '/' +
+                       filename + '_cost.png', accuracy=False)
 
     with open('./tests/' + id_test + '/' + filename + '.txt', 'w') as f:
         f.write('Network architecture:\n')
@@ -79,8 +81,8 @@ def document_test(filename, network_sizes, test_acc_init, test_acc_end,
         f.write(' - Elapsed time: ' + params[8] + 's\n')
         f.write('\n')
         f.write('Test set accuracy:\n')
-        f.write(' - Initial state: ' + str(test_acc_init) + '/' + params[2] + '\n')
-        f.write(' - After training: ' + str(test_acc_end) + '/' + params[2] + '\n')
+        f.write(' - Initial state: ' + str(test_acc_init) + '/' + params[2]+'\n')
+        f.write(' - After training: ' + str(test_acc_end) + '/' + params[2]+'\n')
         f.write('\n')
         f.write('Validation set accuracy during training:\n')
         for ii, validation_acc in enumerate(validation_acc_train):
@@ -102,9 +104,9 @@ def plot_grad_evolution(gradient, filename, log=False):
 
     for i in range(gradient.shape[1]):
         if log:
-            ax.semilogy(epochs, gradient[:, i], label=f'Layer {i + 1}')
+            ax.semilogy(epochs, gradient[:, i], label=f'Layer {i+1}')
         else:
-            ax.plot(epochs, gradient[:, i], label=f'Layer {i + 1}')
+            ax.plot(epochs, gradient[:, i], label=f'Layer {i+1}')
 
     ax.set_xlabel('Epoch')
     ax.set_ylabel('Average Gradient Norm')
@@ -121,9 +123,9 @@ def plot_grad_evolution(gradient, filename, log=False):
 
         for i in range(gradient.shape[1]):
             if log:
-                ax.semilogy(epochs[:20], gradient[:20, i], label=f'Layer {i + 1}')
+                ax.semilogy(epochs[:20], gradient[:20, i], label=f'Layer {i+1}')
             else:
-                ax.plot(epochs[:20], gradient[:20, i], label=f'Layer {i + 1}')
+                ax.plot(epochs[:20], gradient[:20, i], label=f'Layer {i+1}')
 
         ax.set_xlabel('Epoch')
         ax.set_ylabel('Average Gradient Norm')
